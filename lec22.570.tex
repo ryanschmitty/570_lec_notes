@@ -1,0 +1,110 @@
+\documentclass[10pt]{article}
+%%%
+%\usepackage{latexsym}
+\usepackage{epsfig}
+\usepackage{amssymb}
+
+\begin{document}
+\textwidth=8in
+\textheight=9in
+\parindent=10pt
+\hoffset=-1in
+\voffset=-.5in
+\parskip=.065in
+\newtheorem{problem}{Problem}
+
+\begin{center}
+\begin{tabular}{|lcr|}
+\hline
+.\hspace{1in}$$&$$\hspace{2in}$$&$$\hspace{1in}. \\
+{\large \textsf{Fall 2011}} & 
+{\large \textsf{\textbf{CSC 570:} Bioinformatics}} &
+{\large \textsf{ Alexander Dekhtyar}}\\
+.\hspace{1in}$$&$$\hspace{2.5in}$$&$$\hspace{1in}. \\
+\hline	
+\end{tabular}
+\end{center}
+
+\begin{center}
+\textsf{\large Approximate String Matching}
+\end{center}
+
+{\large \textbf{Prepared by:} \textit{Ryan Schmitt, Bob Somers, \& Jim Langlois.}
+}
+
+\section*{Section Header}
+%%%
+%%%  use \section*{}, \subsection*{}, \subsubsection*{}  (with *)
+%%%
+
+\paragraph{File names.} Name your file according to the instructions on the
+web site. The template for the .tex file name is \texttt{lecNN.570.tex}. The \texttt{NN}
+number is assigned to each team on the web page.
+
+\paragraph{Problem Specification.} Use $\backslash$\texttt{paragraph} headings for
+labeled paragraphs. These include paragraphs which need titles, as well
+as examples, theorems etc.:
+
+\paragraph{Example.} This is an example.
+
+\paragraph{Theorem.} This is a theorem statement.
+
+\paragraph{Formulas.} Use \$\$ \ldots \$\$ environment for long-ish formulas:
+
+$$ sim(\bar{x},\bar{y}) = \frac{\sum_{i=1}^{n} x_i\cdot y_i}{\sqrt{\sum_{i=1}^{n}
+x_i^2}\cdot \sqrt{\sum_{i=1}^{n}y_i^2}}.$$
+
+
+\subsection*{Figures}
+
+ Figures are best drawn in \texttt{xfig}. They can be saved in \texttt{.fig} files
+and exported into Encapsulated Postscript, \texttt{.eps} format. And example is
+shown in Figure \ref{fig:lca}. Pick an appropriate width for your images, and
+center them.
+
+\begin{figure}
+\begin{center}
+\psfig{file=lca.eps, width=3in}
+\end{center}
+\caption{Illustrating the definition of lowest common ancestor: node $z$ is
+the \textit{lca} for nodes $x$ and $y$.}\label{fig:lca}
+\end{figure}
+
+
+\subsection*{Algorithms}
+
+Use the setup shown below to create the pseudocode for the algorithms.
+It is not the most elegant way to create algorithm descriptions, but the result
+renders pretty well.
+
+
+\fbox{
+\begin{minipage}{8cm}
+\textsc{Algorithm} \textsf{NaiveStringMatch(S,P,n,m)}\\
+\textbf{begin}\\
+$\mbox{ }\mbox{ }$ \textbf{for} \textsf{k}$=1$ \textbf{to} $n-m+1 \mbox{ }\mbox{ }$ \textbf{do}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{if} $P = S[k,k+m-1] \mbox{ }\mbox{ }$ \textbf{then}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{output}(k);\\
+$\mbox{ }\mbox{ }$\textbf{end for}\\
+\textbf{end}\\
+\end{minipage}
+}
+
+
+
+\subsection*{Bibiliography}
+
+ Bibiliography should accompany all your submissions. The simplest way is the
+\texttt{thebibiliography} environment, as shown in this file.
+
+
+\begin{thebibliography}{999}
+
+\bibitem{gusfield} Dan Gusfield, \textit{Algorithms on Strings, Trees and Sequences: Computer Science
+and Computational Biology},  Cambridge University Press, 1997.
+
+\end{thebibliography}
+
+
+
+\end{document}
