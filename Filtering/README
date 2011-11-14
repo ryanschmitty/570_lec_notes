@@ -1,0 +1,70 @@
+Approximate String Matching via Filtering sections and associated papers:
+
+Moderate Patterns:
+
+    8.2.1 - Tarhio and Ukkonen 1990
+        Approximate Boyer-Moore String Matching [Tarhio and Ukonnen 1993]
+        Boyer-Moore-Horspool techniques:
+            A Fast String Searching Algorithm [Boyer and Moore 1977]
+            Practical Fast Searching in Strings [Horspool 1980]
+
+    8.2.2 - Jokinen, Tarhio, and Ukkonen 1991
+        A Comparison of Approximate String Matching Algorithms [Jokinen et al. 1996]
+        This is a simple version of Chang and Lawler:
+            Sublinear Approximate String Matching and Biological Applications [Chang and Lawler 1994]
+        Extensions in:
+            Approximate Text Searching [Navarro 1998]
+
+    8.2.3 - Wu and Manber 1992
+        Fast Text Searching Allowing Errors [Wu and Manber 1992b]
+
+    8.2.4 - Baeza-Yates and Navarro 1996
+        Faster Approximate String Matching [Baeza-Yates and Navarro 1999]
+
+    8.2.5 - Navarro and Baeza-Yates 1998
+        Improving an Algorithm for Approximate Pattern Matching [Navarro and Baeza-Yates 1998a]
+        analysis in:
+            Approximate Text Searching [Navarro 1998]
+        hierarchical verification added:
+            Approximate Text Searching[Navarro 1998]
+
+    8.2.6 - Navarro and Raffinot 1998
+        Fast and Flexible String Matching [Navarro and Raffinot 2000]
+        Approximate Text Searching [Navarro 1998]
+        Bit-parallel implementation (BNDM):
+            Fast and Flexible String Matching[Navarro and Raffinot 2000]
+
+Very Long Patterns:
+
+    8.3.1 - Chang and Lawler 1990
+        Sublinear Approximate String Matching and Biological Applications [Chang and Lawler 1994]
+        better in:
+            A General Technique to Improve Filter Algorithms for Approximate String Matching [Giegerich et al. 1997]
+
+    8.3.2 - Ukkonen 1992
+        Approximate string-matching with q-grams and maximal matches [Ukkonen 1992]
+        1st algorithm similar to LET:
+            Sublinear Approximate String Matching and Biological Applications [Chang and Lawler 1994]
+        generalization of the counting filter:
+            A Comparison of Approximate String Matching Algorithms [Jokinen et al. 1996]
+
+    8.3.3 - Takaoka 1994
+        Approximate Pattern Matching with Samples [Takaoka 1994]
+        simplification of:
+            Sublinear Approximate String Matching and Biological Applications [Chang and Lawler 1994]
+
+    8.3.4 - Chang and Marr 1994
+        *** COULDN'T FIND TEXT ANYWHERE! ***
+        [Chang and Marr 1994]
+        variation of SET:
+            Sublinear Approximate String Matching and Biological Applications [Chang and Lawler 1994]
+
+    8.3.5 - Sutinen and Tarhio 1995
+        On Using q-Gram Locations in Approximate String Matching [Sutinen and Tarhio 1995]
+
+    8.3.6 - Shi 1996
+        *** COULDN'T FIND TEXT ANYWHERE! ***
+        [Shi 1996]
+
+    8.3.7 - Giegerich, Kurtz, Hischke, and Ohlebusch 1996
+        A General Technique to Improve Filter Algorithms for Approximate String Matching [Giegerich et al. 1997]
