@@ -8,5 +8,5 @@ $(PDF): $(TEXSRC)
 	pdflatex $(TARGET).tex
 
 clean:
-	rm *.ps $(TARGET).pdf *.dvi *.log *.aux *.bbl *.blg *.bak *.lof *.lot *.out *.toc
+	rm *.ps *.pdf *.dvi *.log *.aux *.bbl *.blg *.bak *.lof *.lot *.out *.toc *.eps
 

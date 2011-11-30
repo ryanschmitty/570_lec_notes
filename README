@@ -1,5 +1,5 @@
 Lecture notes for Cal Poly CSC 570: Approximate String Matching.
 
-Requires 'latex' and 'fig2dev' (for converting .fig files to .eps).
+Requires 'latex'. Run 'make' to build, and 'make clean' to clean up.
 
 Authors: Ryan Schmitt, Bob Somers, & Jim Langlois.

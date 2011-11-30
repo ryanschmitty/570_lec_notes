@@ -32,78 +32,270 @@
 {\large \textbf{Prepared by:} \textit{Ryan Schmitt, Bob Somers, \& Jim Langlois.}
 }
 
-\section*{Section Header}
-%%%
-%%%  use \section*{}, \subsection*{}, \subsubsection*{}  (with *)
-%%%
 
-\paragraph{File names.} Name your file according to the instructions on the
-web site. The template for the .tex file name is \texttt{lecNN.570.tex}. The \texttt{NN}
-number is assigned to each team on the web page.
+%%
+%%  RYAN'S TEXT SECTION BEGINS HERE
+%%
 
-\paragraph{Problem Specification.} Use $\backslash$\texttt{paragraph} headings for
-labeled paragraphs. These include paragraphs which need titles, as well
-as examples, theorems etc.:
+\section*{Approximate String Matching and Filtering}
 
-\paragraph{Example.} This is an example.
+\paragraph{}Filtering is another method for approximate string matching. Below is a simple overview of how filtering algorithms are designed:
 
-\paragraph{Theorem.} This is a theorem statement.
+\begin{list}{}{}
+\item 1) Filtering Phase
+\begin{list}{*}{}
+\item input: source text, patternjjwkkk
+\item algorithm quickly scans source for potential pattern matches
+\item output: list of potential matches
+\end{list}
+\item 2) Verification Phase
+\begin{list}{*}{}
+\item input: list of potential matches
+\item algorithm slowly verifies potential matches as exact matches
+\item output: list of exact matches
+\end{list}
+\end{list}
 
-\paragraph{Formulas.} Use \$\$ \ldots \$\$ environment for long-ish formulas:
+The goal here is to mask out sections of the text that cannot contain matches, and only use the expensive algorithm on sections that could have matches.
+For an overview of the twelve filtering algorithms please see \cite{navarro99}.
 
-$$ sim(\bar{x},\bar{y}) = \frac{\sum_{i=1}^{n} x_i\cdot y_i}{\sqrt{\sum_{i=1}^{n}
-x_i^2}\cdot \sqrt{\sum_{i=1}^{n}y_i^2}}.$$
+For specific algorithms see the following list:
 
+\begin{list}{*}{}
+\item Faster approximate string matching \cite{baeza99}
+\item Sublinear approximate string matching and biological applications \cite{chang94a}
+\item Approximate string matching and local similarity \cite{chang94b}
+\item A comparison of approximate string matching algorithms \cite{jokinen96}
+\item A Guided Tour to Approximate String Matching \cite{navarro99}
+\item Improving an algorithm for approximate pattern matching \cite{navarro98}
+\item Fast and flexible string matching by combining bit-parallelism and suffix automata \cite{navarro00}
+\item Fast approximate string matching with q-blocks sequences \cite{shi96}
+\item On using q-gram locations in approximate string matching \cite{sutinen95}
+\item Approximate pattern matching with samples \cite{takaoka94}
+\item Approximate Boyer-Moore string matching \cite{taruk93}
+\item Approximate string matching with q-grams and maximal matches \cite{ukkonen92}
+\item Fast text searching allowing errors \cite{wu92}
+\end{list}
 
-\subsection*{Figures}
+One of the forms of filtering is based on the Boyer-Moore algorithm that we have
+studied previously (specifically the Boyer-Moore-Horspool (BMH) variation, where
+the match heuristic is ignored, and only a simplified occurrence heuristic is used
+\cite{taruk93}). And the genesis of this type of filtering is a 1993 paper by Tarhio
+and Ukkonen, where they extend the BMH algorithm for the k-differences problem \cite{taruk93}.
 
- Figures are best drawn in \texttt{xfig}. They can be saved in \texttt{.fig} files
-and exported into Encapsulated Postscript, \texttt{.eps} format. And example is
-shown in Figure \ref{fig:lca}. Pick an appropriate width for your images, and
-center them.
+For a review of the Boyer-Moore algorithm, please see the String Matching lecture notes.
 
-\begin{figure}
-\begin{center}
-\psfig{file=lca.eps, width=3in}
-\end{center}
-\caption{Illustrating the definition of lowest common ancestor: node $z$ is
-the \textit{lca} for nodes $x$ and $y$.}\label{fig:lca}
-\end{figure}
+\subsection*{The K-Differences Problem}
 
+\paragraph*{Problem Statement}Given a text, T, and a pattern, P, find all occurrences of P
+in T with at most k mismatches \cite{taruk93}. This is related to the Hamming Distance.
 
-\subsection*{Algorithms}
+\subsubsection*{Example}
 
-Use the setup shown below to create the pseudocode for the algorithms.
-It is not the most elegant way to create algorithm descriptions, but the result
-renders pretty well.
+\noindent T = ``emample example''
 
+\noindent P = ``example''
+
+The k-differences problem with k=0 has only one solution, where ``example'' matches ``example.''
+However, with k=1, there are two occurrences of ``example'' in ``emample example'' with at most 1 mismatch.
+
+\subsection*{Approximate BMH Algorithm}
+
+This extension to the Boyer-Moore-Horspool algorithm solves the k-differences problem, and, while not a
+filtering algorithm itself, was the basis for Tarhio and Ukkonen to develop one of the first filtering algorithms
+\cite{taruk93}. The crux of this extension is the generalization of both the right-to-left scanning of the pattern
+against the text, and the shift computation.
+
+The naming conventions we will use are as follows: for a text, T, of length n, the position index is h, and for a
+pattern, P, of length m, the position index is i. We will find all occurrences of P in T with at most k mismatches.
+
+\paragraph{Right-to-Left Scanning}
+Instead of scanning until one mismatch is found, we scan until $k+1$ mismatches are found.
+
+For example, if our pattern is ``abbb'' our text is ``abaacbb'' we have this as our first alignment:
+
+\vspace{12pt}
+
+\noindent \verb/a b b b/
+
+\noindent \verb/a b a a c b b/
+
+\vspace{12pt}
+
+If k=1, we know it's not a match after we’ve found two mismatches:
+
+\vspace{12pt}
+
+\noindent \verb/a b B B/
+
+\noindent \verb/a b A A c b b/
+
+\vspace{12pt}
+
+However, if k=2, we have a match, since we only found two mismatches.
+
+\paragraph{Shift Computation}
+Instead of only basing the shift on the text character paired with the last pattern character, we base the shift on the
+last $k+1$ characters. The maximum shift is $m-k$. The shift is computed as the minimum shift out of those defined by the
+$k+1$ text characters that are paired with the $k+1$ last characters of the pattern.
+
+For example, if our pattern is ``abbb'' our text is ``abaacbb'' and $k=1$, we have the following as our first alignment:
+
+\vspace{12pt}
+
+\noindent \verb/a b b b/
+
+\noindent \verb/a b a a c b b/
+
+\vspace{12pt}
+
+Here we have greater than k mismatches (2 mismatches) so we don't have a match. We look at the text characters below the
+last $k+1$ characters of the pattern to determine our shift. Since $k = 1$, then $k+1 = 2$, and the text characters below the
+last 2 characters of the pattern are `a' and `a':
+
+\vspace{12pt}
+
+\noindent \verb/a b B B/
+
+\noindent \verb/a b A A c b b/
+
+\vspace{12pt}
+
+The `a' located at T$_{4}$ prescribes a shift of 3, in order to pair with the `a' at P$_{1}$, and the `a' located at T$_{3}$ prescribes
+a shift of 2 to pair with the `a' at P$_{1}$. Because we minimize over all the shifts ($k+1$ of them), we choose the shift of
+2, which leaves us with this:
+
+\vspace{12pt}
+
+\noindent \verb/    a b b b/
+
+\noindent \verb/a b a a c b b/
+
+\vspace{12pt}
+
+Again, we have two mismatches (greater than the allowed 1 mismatch), so we don't have a match. We look at the text
+characters below the last $k+1$ pattern characters:
+
+\vspace{12pt}
+
+\noindent \verb/    a b B B/
+
+\noindent \verb/a b a a C B b/
+
+\vspace{12pt}
+
+The `b' located at T$_{6}$ prescribes a shift of 1, in order to pair with the `b' at P$_{3}$, and the `c' located at T$_{5}$ prescribes
+a shift of 3, because `c' does not occur in the pattern so we can shift past it. We chose the minimum of the prescribed
+shifts, which means we choose the shift of 1.
+
+\vspace{12pt}
+
+\noindent \verb/      a b b b/
+
+\noindent \verb/a b a a c b b/
+
+\vspace{12pt}
+
+Here we only have one mismatch, which is not greater than our k=1. Therefore we have a match!
+
+\vspace{12pt}
+
+The full algorithms are as follows:
 
 \fbox{
-\begin{minipage}{8cm}
-\textsc{Algorithm} \textsf{NaiveStringMatch(S,P,n,m)}\\
+\begin{minipage}{7.8cm}
+\textsc{Algorithm 2} \textsf{Computation of the shift table. \cite{taruk93}}\\
 \textbf{begin}\\
-$\mbox{ }\mbox{ }$ \textbf{for} \textsf{k}$=1$ \textbf{to} $n-m+1 \mbox{ }\mbox{ }$ \textbf{do}\\
-$\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{if} $P = S[k,k+m-1] \mbox{ }\mbox{ }$ \textbf{then}\\
-$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{output}(k);\\
-$\mbox{ }\mbox{ }$\textbf{end for}\\
+$\mbox{ }\mbox{ }$ \textbf{for} \textsf{a in} $\Sigma$ \textbf{do} \textsf{ready[a] := m + 1;}\\
+$\mbox{ }\mbox{ }$ \textbf{for} \textsf{a in} $\Sigma$ \textbf{do}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{for} \textsf{i := m downto m - k} \textbf{do}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{shiftTable[i, a] := m;}\\
+$\mbox{ }\mbox{ }$ \textbf{for} \textsf{i := m - 1 downto 1} \textbf{do begin}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{for} \textsf{j := ready[p}$_{\textsf{i}}$\textsf{] - 1 downto max(i, m - k)} \textbf{do}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{shiftTable[j, p}$_{\textsf{i}}$\textsf{] := j - i;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{ready[p}$_{\textsf{i}}$\textsf{] := max(i, m - k)} \textbf{end}\\ 
 \textbf{end}\\
 \end{minipage}
 }
 
+\fbox{
+\begin{minipage}{10.5cm}
+\textsc{Algorithm 2} \textsf{Approximate string matching with k mismatches. \cite{taruk93}}\\
+\textbf{begin}\\
+$\mbox{ }\mbox{ }$ \textsf{compute shiftTable from P with Algorithm 1;}\\
+$\mbox{ }\mbox{ }$ \textsf{j := m;}\\
+$\mbox{ }\mbox{ }$ \textbf{while} \textsf{j} $\le$ \textsf{n + k} \textbf{do begin}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{h := j; i := m; neq := 0;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{d := m - k;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{while} \textsf{i} $>$ \textsf{0 and neq} $\le$ \textsf{k} \textbf{do begin}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{if} \textsf{i} $\ge$ \textsf{m - k} \textbf{then} \textsf{d := min(d, shiftTable[i, t}$_{\textsf{h}}$\textsf{]);}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{if} \textsf{t}$_{\textsf{h}} \neq$ \textsf{p}$_{\textsf{i}}$ \textbf{then} \textsf{neq := neq + 1;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{i := i - 1; h := h - 1} \textbf{end}\textsf{;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textbf{if} \textsf{neq} $\le$ \textsf{k} \textbf{then} \textsf{report match at postition j;}\\
+$\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }\mbox{ }$ \textsf{j := j + d} \textbf{end}\textsf{;}\\
+\textbf{end}\\
+\end{minipage}
+}
 
+\vspace{12pt.}
+
+The preprocessing time to create the shift table is $O(m + kc)$, where $c$ is the size of the alphabet. The storage space
+required is $O(kc)$. The running time of the approximate BMH algorithm in the worst case is $O(mn)$, however, in
+\cite{taruk93} they prove the expected running time is $O(nk (\frac{k}{c} + \frac{1}{m-k})$ if the lengths of all the shifts in the
+shift table are mutually independent. \cite{taruk93}
+
+
+\subsection*{Filtering and Approximate BMH}
+
+We will only mention the basics of how the ideas in this algorithm are applied to filtering, and leave it to the reader
+to research it further in \cite{taruk93}.
+
+The authors' algorithm has two phases that they call scanning and checking \cite{taruk93}, which are analogous to the
+filtering and verification phase, respectively, mentioned earlier. The verification phase uses the standard dynamic
+programming method for checking whether the edit distance between two strings is within some tolerance. It is the
+scanning phase we are interested in, which uses the ideas developed in the approximate BMH algorithm to compute the
+shift once an alignment of text and pattern is marked as a potential match or not.
+
+The scanning phase performs two operations iteratively: mark and shift. The mark operation marks the current alignment
+of text and pattern as promising or not, prompting a check via dynamic programming if it looks like a potential match.
+We will not explore the details of how a particular alignment is deemed promising, which can be reviewed in \cite{taruk93}.
+The shift operation uses the exact same heuristic as the approximate BMH algorithm. That is, examining the text
+characters under the last $k+1$ characters of the pattern.
+
+
+
+%%
+%%  RYAN'S TEXT SECTION ENDS HERE
+%%
+
+
+%%
+%%  RYAN'S BIBLIOGRAPHY SECTION STARTS HERE
+%%
 
 \subsection*{Bibiliography}
 
- Bibiliography should accompany all your submissions. The simplest way is the
-\texttt{thebibiliography} environment, as shown in this file.
-
-
 \begin{thebibliography}{999}
 
-\bibitem{gusfield} Dan Gusfield, \textit{Algorithms on Strings, Trees and Sequences: Computer Science
-and Computational Biology},  Cambridge University Press, 1997.
+\bibitem{baeza99} Baeza-Yates, R. and Navarro, G., \textit{Faster approximate string matching}, Algorithmica, 1999.
+\bibitem{chang94a} Chang, W. and Lawler, E., \textit{Sublinear approximate string matching and biological applications}, Algorithmica, 1994.
+\bibitem{chang94b} Chang, W. and Marr, T., \textit{Approximate string matching and local similarity}, Proceedings of the 5th Annual Symposium on Combinatorial Pattern Matching, 1994.
+\bibitem{jokinen96} Jokinen, P., Tarhio, J., and Ukkonen, E., \textit{A comparison of approximate string matching algorithms}, Software Practice Exper., 1996.
+\bibitem{navarro99} Navarro, G., \textit{A Guided Tour to Approximate String Matching}, ACM Computing Surveys, 1999.
+\bibitem{navarro98} Navarro, G. and Baeza-Yates, R., \textit{Improving an algorithm for approximate pattern matching}, Algorithmica, 1998.
+\bibitem{navarro00} Navarro, G. and Raffinot, M., \textit{Fast and flexible string matching by combining bit-parallelism and suffix automata}, ACM J. Exp. Algor. 5, 2000.
+\bibitem{shi96} Shi, F., \textit{Fast approximate string matching with q-blocks sequences}, Proceedings of the 3rd Annual South American Workshop on String Processing, 1996.
+\bibitem{sutinen95} Sutinen, E. and Tarhio, J., \textit{On using q-gram locations in approximate string matching}, Proceedings of the 3rd Annual European Symposium on Algorithms, 1995.
+\bibitem{takaoka94} Takaoka, T., \textit{Approximate pattern matching with samples}, Proceedings of ISAAC '94, 1994.
+\bibitem{taruk93} Tarhio, J. and Ukkonen, E., \textit{Approximate Boyer-Moore string matching}, SIAM J. Comput., 1993.
+\bibitem{ukkonen92} Ukkonen, E., \textit{Approximate string matching with q-grams and maximal matches}, Theor. Comput. Sci, 1992.
+\bibitem{wu92} Wu, S., and Manber, U., \textit{Fast text searching allowing errors}, Commun. ACM, 1992.
 
 \end{thebibliography}
+
+%%
+%%  RYAN'S BIBLIOGRAPHY SECTION ENDS HERE
+%%
 
 
 
