@@ -89,8 +89,8 @@ C_{i, 0} = i \\
 C_{0, j} = j
 \end{align*}
 
-To fill in the rest of the matrix, we simply proceed either rowwise left to
-right or columnwise top to bottom. When evaluating a particular cell $C_{i, j}$,
+To fill in the rest of the matrix, we simply proceed either row-wise left to
+right or column-wise top to bottom. When evaluating a particular cell $C_{i, j}$,
 we notice that the edit distances of all shorter strings have been computed
 already, so it's simply a matter of inspecting the edit distances from the
 preceding strings at $C_{i - 1, j}$, $C_{i - 1, j - 1}$, and $C_{i, j - 1}$ and
@@ -105,9 +105,170 @@ C_{i - 1, j - 1} & \text{if } x_{i} = y_{j} \\
 \end{cases}
 \end{align*}
 
+For this example we'll move row-wise left to right. The first cell that needs
+to be filled in is $C_{1, 1}$. We compare $x_{1}$ (``s") with $y_{1}$ (``s") and
+find that they match. Thus, we copy the edit distance from $C_{0, 0}$ into this
+cell.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ \hline
+s & 1 & \textbf{\underline{0}} &   &   &   &   &   &   \\ \hline
+u & 2 &   &   &   &   &   &   &   \\ \hline
+r & 3 &   &   &   &   &   &   &   \\ \hline
+v & 4 &   &   &   &   &   &   &   \\ \hline
+e & 5 &   &   &   &   &   &   &   \\ \hline
+y & 6 &   &   &   &   &   &   &   \\ \hline
+\end{tabular}
+\end{center}
+
+Next we'll consider $C_{1, 2}$. We compare $x_{1}$ (``s") with $y_{2}$ (``u")
+find that they do not match. Thus, we examine the edit distances from the three
+directions we could have arrived at this cell, take the minimum, and increment
+it to account for this replacement. We find that the minimum of its left,
+top-left, and top neighbors is 0 in $C_{1, 1}$, so we set this cell's edit
+distance to 1.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & 0 & \textbf{1} & \textbf{2} & 3 & 4 & 5 & 6 & 7 \\ \hline
+s & 1 & \textbf{0} & \textbf{\underline{1}}  &   &   &   &   &   \\ \hline
+u & 2 &   &   &   &   &   &   &   \\ \hline
+r & 3 &   &   &   &   &   &   &   \\ \hline
+v & 4 &   &   &   &   &   &   &   \\ \hline
+e & 5 &   &   &   &   &   &   &   \\ \hline
+y & 6 &   &   &   &   &   &   &   \\ \hline
+\end{tabular}
+\end{center}
+
+By continuing to traverse the empty cells in this fashion, we can complete the
+edit distance matrix as follows. The bold path shows one optimal path for
+transforming one string into the other.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & \textbf{\underline{0}} & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ \hline
+s & 1 & \textbf{\underline{0}} & 1 & 2 & 3 & 4 & 5 & 6 \\ \hline
+u & 2 & 1 & \textbf{\underline{0}} & 1 & 2 & 3 & 4 & 5 \\ \hline
+r & 3 & 2 & 1 & \textbf{\underline{0}} & 1 & 2 & 3 & 4 \\ \hline
+v & 4 & 3 & 2 & 1 & \textbf{\underline{1}} & 2 & 3 & 4 \\ \hline
+e & 5 & 4 & 3 & 2 & 2 & \textbf{\underline{1}} & \textbf{\underline{2}} & 3 \\ \hline
+y & 6 & 5 & 4 & 3 & 3 & 2 & 2 & \textbf{\underline{2}} \\ \hline
+\end{tabular}
+\end{center}
+
 \subsection*{Text Searching}
 
-\subsection*{Other Distance and Cost Functions}
+\paragraph{}Extending this algorithm to text searching is actually extremely
+easy. In this case we're interested in finding the locations of a pattern $P$
+inside a larger text $T$ with up to $k$ possible errors. Since we're still
+considering the simple edit distance, those possible errors consist of
+\textit{insertions}, \textit{deletions}, and \textit{replacements}.
+
+The algorithm is nearly identical to computing the edit distance matrix. We
+simply assign $x = P$ and $y = T$. We also modify our initialization such that
+row 0 is initialized as follows:
+\begin{align*}
+C_{0, j} = 0 \text{ for all } j \in 0 \ldots n
+\end{align*}
+
+Thus, our initial matrix for seaching for the pattern ``survey" inside the text
+``surgery" would look like this:
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline
+s & 1 &   &   &   &   &   &   &   \\ \hline
+u & 2 &   &   &   &   &   &   &   \\ \hline
+r & 3 &   &   &   &   &   &   &   \\ \hline
+v & 4 &   &   &   &   &   &   &   \\ \hline
+e & 5 &   &   &   &   &   &   &   \\ \hline
+y & 6 &   &   &   &   &   &   &   \\ \hline
+\end{tabular}
+\end{center}
+
+The intuition behind this is as follows: Since row 0 represents the empty
+string, each cell $C_{0, j}$ represents a location in the text $T_{j}$ where
+the empty string matches. Since the length of the matched substring is zero, it
+matches everywhere with zero errors.
+
+We fill the rest of the matrix as we did before, computing the edit distance
+at each cell. However this time, note that the edit distance represents the
+\textbf{cumulative total number of errors} when searching for the pattern $P$
+in the text $T$.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline
+s & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1 \\ \hline
+u & 2 & 1 & 0 & 1 & 2 & 2 & 2 & 2 \\ \hline
+r & 3 & 2 & 1 & 0 & 1 & 2 & 2 & 3 \\ \hline
+v & 4 & 3 & 2 & 1 & 1 & 2 & 3 & 3 \\ \hline
+e & 5 & 4 & 3 & 2 & 2 & 1 & 2 & 3 \\ \hline
+y & \textbf{6} & \textbf{5} & \textbf{4} & \textbf{3} & \textbf{3} & \textbf{\underline{2}} & \textbf{\underline{2}} & \textbf{\underline{2}} \\ \hline
+\end{tabular}
+\end{center}
+
+To find approximate matches of the pattern, we simply look at the row which is
+at the end of the pattern we're interested in. In this case, we look at row 6,
+which is the end of ``survey". Note that this means the method also works for
+searching for all prefixes of the pattern, by examining the row corresponding
+to the last character in the prefix.
+
+In that row we look for cells with an edit distance $\leq k$, where $k$ is the
+maximum number of errors we allow. The location where these matches occur is at
+position $j$, where $C_{|P|, j} \leq k$. Note that $j$ marks the \textit{end}
+of the match, not the beginning.
+
+In our example above, if we're interested in matches where $k \leq 2$, we find
+three matches at positions 5, 6, and 7. These correspond to the following
+approximate matches for ``survey" in ``surgery":
+
+\begin{enumerate}
+\item survey $\longrightarrow$ surge
+    \begin{itemize}
+    \item Replacement of \textbf{v} with \textbf{g}.
+    \item Deletion of \textbf{y}.
+    \end{itemize}
+\item survey $\longrightarrow$ surger
+    \begin{itemize}
+    \item Replacement of \textbf{v} with \textbf{g}.
+    \item Replacement of \textbf{y} with \textbf{r}.
+    \end{itemize}
+\item survey $\longrightarrow$ surgery
+    \begin{itemize}
+    \item Replacement of \textbf{v} with \textbf{g}.
+    \item Insertion of \textbf{r}.
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{Additional Notes}
+
+\begin{itemize}
+
+\item \textbf{We don't need to store the entire matrix.} We only need to store
+the previous row (for row-wise traversal) or the previous column (for column-wise
+traversal). This can substantially improve the space requirements of the
+algorithm.
+
+\item \textbf{Text searches should use column-wise traversal.} Since generally
+$|P| \ll |T|$, it is beneficial to traverse the matrix column-wise so that the
+storage requirements are only $O(|P|)$ instead of $O(|T|)$.
+
+\item \textbf{The time complexity isn't that great.} It's $O(|P||T|)$ in both
+the worst and average case.
+
+\item \textbf{It works well with other distance and cost functions.} For example,
+if your insertions and deletions have a different cost than your replacements,
+simply increment the cell by the appropriate cost depending on which operation
+you choose.
+
+\end{itemize}
 
 %%
 %%  BOB'S TEXT SECTION ENDS HERE
