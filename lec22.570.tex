@@ -3,6 +3,7 @@
 %\usepackage{latexsym}
 \usepackage{epsfig}
 \usepackage{amssymb}
+\usepackage{amsmath}
 
 \begin{document}
 \textwidth=8in
@@ -32,6 +33,85 @@
 {\large \textbf{Prepared by:} \textit{Ryan Schmitt, Bob Somers, \& Jim Langlois.}
 }
 
+%%
+%%  BOB'S TEXT SECTION BEGINS HERE
+%%
+
+\section*{Approximate String Matching with Dynamic Programming}
+
+\paragraph{}The core idea behind using dynamic programming to solve the
+approximate string matching problem is very straightforward and has been
+``discovered" by a variety of authors between 1968 and 1992. All of these,
+however, focus on using dynamic programming solely to compute the edit distance.
+Therefore, the seminal work in this area is usually attributed to Sellers who
+expanded the technique from an edit distance computation to an approximate
+string search \cite{sellers80}.
+
+The original algorithm is not particularly efficient, but it's
+one of the most flexible for adaptation to different distance and cost
+functions. The additional work in this area since the original paper has been
+focused on small efficiency improvements to the original algorithm.
+
+\subsection*{Computing the Edit Distance}
+
+\paragraph{}In this example, we'll look at computing the edit distance between
+``survey" and ``surgery" with dynamic programming. We'll use the
+\textit{Levenshtein} or \textit{edit distance} as our distance function which
+allows for three possible operations, \textit{insertion}, \textit{deletion},
+and \textit{replacement}. We'll also assume that these operations have a
+uniform cost of 1. As we'll see later, these are not crippling assumptions,
+since the algorithm handles other distance and cost functions very well.
+
+To compute the edit distance $ed(x, y)$ between two strings $x$ and
+$y$, we begin by constructing a matrix $C_{0 \ldots |x|, 0 \ldots |y|}$ where
+$C_{i, j}$ represents the minimum number of operations needed to match
+$x_{1 \ldots i}$ to $y_{1 \ldots j}$.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+  &   & s & u & r & g & e & r & y \\ \hline
+  & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ \hline
+s & 1 &   &   &   &   &   &   &   \\ \hline
+u & 2 &   &   &   &   &   &   &   \\ \hline
+r & 3 &   &   &   &   &   &   &   \\ \hline
+v & 4 &   &   &   &   &   &   &   \\ \hline
+e & 5 &   &   &   &   &   &   &   \\ \hline
+y & 6 &   &   &   &   &   &   &   \\ \hline
+\end{tabular}
+\end{center}
+
+Row 0 represents the empty string. Thus, each successive cell in row 0 requires
+an additional deletion to match the empty string, so it's easy to see why this
+initialization makes sense. The same logic follows for column 0. More formally,
+we initialize our matrix as follows:
+\begin{align*}
+C_{i, 0} = i \\
+C_{0, j} = j
+\end{align*}
+
+To fill in the rest of the matrix, we simply proceed either rowwise left to
+right or columnwise top to bottom. When evaluating a particular cell $C_{i, j}$,
+we notice that the edit distances of all shorter strings have been computed
+already, so it's simply a matter of inspecting the edit distances from the
+preceding strings at $C_{i - 1, j}$, $C_{i - 1, j - 1}$, and $C_{i, j - 1}$ and
+incrementing the minimum edit distance if the two characters in question $x_{i}$
+and $y_{j}$ don't match.
+
+More formally, the rules for filling in a cell $C_{i, j}$ are as follows:
+\begin{align*}
+C_{i, j} = \begin{cases}
+C_{i - 1, j - 1} & \text{if } x_{i} = y_{j} \\
+1 + \text{min}(C_{i - 1, j}, C_{i - 1, j - 1}, C_{i, j - 1}) & \text{otherwise}
+\end{cases}
+\end{align*}
+
+\subsection*{Text Searching}
+
+\subsection*{Other Distance and Cost Functions}
+
+%%
+%%  BOB'S TEXT SECTION ENDS HERE
+%%
 
 %%
 %%  RYAN'S TEXT SECTION BEGINS HERE
@@ -262,20 +342,27 @@ We will not explore the details of how a particular alignment is deemed promisin
 The shift operation uses the exact same heuristic as the approximate BMH algorithm. That is, examining the text
 characters under the last $k+1$ characters of the pattern.
 
-
-
 %%
 %%  RYAN'S TEXT SECTION ENDS HERE
-%%
-
-
-%%
-%%  RYAN'S BIBLIOGRAPHY SECTION STARTS HERE
 %%
 
 \subsection*{Bibiliography}
 
 \begin{thebibliography}{999}
+
+%%
+%%  BOB'S BIBLIOGRAPHY SECTION STARTS HERE
+%%
+
+\bibitem{sellers80} Sellers, P., \textit{The theory and computation of evolutionary distances: Pattern recognition}, Journal of Algorithms, 1980.
+
+%%
+%%  BOB'S BIBLIOGRAPHY SECTION ENDS HERE
+%%
+
+%%
+%%  RYAN'S BIBLIOGRAPHY SECTION STARTS HERE
+%%
 
 \bibitem{baeza99} Baeza-Yates, R. and Navarro, G., \textit{Faster approximate string matching}, Algorithmica, 1999.
 \bibitem{chang94a} Chang, W. and Lawler, E., \textit{Sublinear approximate string matching and biological applications}, Algorithmica, 1994.
@@ -291,12 +378,10 @@ characters under the last $k+1$ characters of the pattern.
 \bibitem{ukkonen92} Ukkonen, E., \textit{Approximate string matching with q-grams and maximal matches}, Theor. Comput. Sci, 1992.
 \bibitem{wu92} Wu, S., and Manber, U., \textit{Fast text searching allowing errors}, Commun. ACM, 1992.
 
-\end{thebibliography}
-
 %%
 %%  RYAN'S BIBLIOGRAPHY SECTION ENDS HERE
 %%
 
-
+\end{thebibliography}
 
 \end{document}
